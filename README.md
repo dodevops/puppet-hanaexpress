@@ -50,3 +50,7 @@ hanaexpress-databases:
         systemdb_port: 39017
         tenantdb_port: 39041
 ```
+
+# API
+
+For details about the API see the [generated API documentation](https://dodevops.github.io/puppet-hanaexpress/).
