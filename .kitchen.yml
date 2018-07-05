@@ -1,0 +1,34 @@
+---
+driver:
+    name: vagrant
+    run_options:
+        env:
+
+provisioner:
+    name: puppet_apply
+    custom_facts:
+        store_username: <%= ENV['STORE_USERNAME'] %>
+        store_password: <%= ENV['STORE_PASSWORD'] %>
+
+platforms:
+    - name: ubuntu-16.04
+      driver:
+        box: bento/ubuntu-16.04
+    - name: ubuntu-18.04
+      driver:
+        box: bento/ubuntu-18.04
+    - name: debian-9
+      driver:
+        box: bento/debian-9
+    - name: centos-7
+      driver:
+        box: bento/centos-7
+
+suites:
+    - name: default
+      provisioner:
+        manifests_path: test/integration/default/puppet
+        modules_path: test/integration/default/puppet/modules
+        puppetfile_path: test/integration/default/puppet/Puppetfile
+
+

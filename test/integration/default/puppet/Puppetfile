@@ -1,0 +1,5 @@
+forge "https://forgeapi.puppetlabs.com"
+
+mod 'puppetlabs-stdlib', '4.25.1'
+mod 'puppetlabs-docker', '1.1.0'
+mod 'herculesteam-augeasproviders_sysctl', '2.2.0'
