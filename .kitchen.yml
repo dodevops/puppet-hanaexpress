@@ -20,9 +20,6 @@ platforms:
     - name: debian-9
       driver:
         box: bento/debian-9
-    - name: centos-7
-      driver:
-        box: bento/centos-7
 
 suites:
     - name: default
@@ -30,5 +27,9 @@ suites:
         manifests_path: test/integration/default/puppet
         modules_path: test/integration/default/puppet/modules
         puppetfile_path: test/integration/default/puppet/Puppetfile
-
-
+    - name: hiera
+      provisioner:
+        manifests_path: test/integration/hiera/puppet
+        modules_path: test/integration/hiera/puppet/modules
+        puppetfile_path: test/integration/hiera/puppet/Puppetfile
+        hiera_data_path: test/integration/hiera/puppet/hieradata

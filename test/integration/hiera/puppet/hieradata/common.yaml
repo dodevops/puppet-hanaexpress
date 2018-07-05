@@ -1,0 +1,12 @@
+classes:
+    - hanaexpress
+
+hanaexpress::store_username: "%{store_username}"
+hanaexpress::store_password: "%{store_password}"
+
+hanaexpress-databases:
+    testhana1:
+        version: "2.00.030.00.20180403.2"
+        password: "TestHanaExpress1"
+        systemdb_port: 39017
+        tenantdb_port: 39041
