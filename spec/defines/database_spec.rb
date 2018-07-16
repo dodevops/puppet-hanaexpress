@@ -50,7 +50,7 @@ describe 'hanaexpress::database' do
                           'extra_parameters' => [
                               '--ulimit nofile=1048576:1048576',
                               '--sysctl kernel.shmmax=1073741824',
-                              '--sysctl net.ipv4.ip_local_port_range=\'40000 60999\'',
+                              '--sysctl net.ipv4.ip_local_port_range="40000 60999"',
                               '--sysctl kernel.shmmni=524288',
                               '--sysctl kernel.shmall=8388608'
                           ],
