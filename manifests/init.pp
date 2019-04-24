@@ -47,6 +47,13 @@ class hanaexpress (
       value => "40000 60999"
   }
 
+  # Set up docker in general if not yet done (see https://github.com/puppetlabs/puppetlabs-docker/issues/461
+  # and https://github.com/dodevops/puppet-hanaexpress/issues/1 for background)
+
+  if ! defined(Class['docker']) {
+    include 'docker'
+  }
+
   # Login to the Docker store to pull SAP Hana images
 
   if ($store_password) {
