@@ -1,1 +1,1 @@
-hiera_include('classes')
+lookup('classes', {merge => unique, default_value => undef}).include
