@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## Release 2.0.0
+
+**Features**
+* Support for Puppet 6
+
+**Bugfixes**
+
+**Known Issues**
+
 ## Release 1.0.0
 
 **Features**
