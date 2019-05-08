@@ -2,12 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
-## Release 0.1.2
+## Release 1.0.0
 
 **Features**
 
 **Bugfixes**
-* Replacing hiera_* functions due to deprecation in puppet 6
+* Locked this version to Puppet <6
 
 **Known Issues**
 
