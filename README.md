@@ -1,5 +1,7 @@
 # SAP HANA Express docker hosting module
 
+[![Build Status](https://travis-ci.org/dodevops/puppet-hanaexpress.svg?branch=master)](https://travis-ci.org/dodevops/puppet-hanaexpress)
+
 This module manages multiple SAP HANA Express instances using Docker as described on the [official SAP HANA Tutorials page](https://www.sap.com/developer/tutorials/hxe-ua-install-using-docker.html).
 
 Please note, that this module **is in no means connected to SAP in any kind**. Please don't ask them for support.
