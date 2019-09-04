@@ -51,6 +51,8 @@ hanaexpress-databases:
         tenantdb_port: 39041
 ```
 
-# API
+## Integration tests
 
-For details about the API see the [generated API documentation](https://dodevops.github.io/puppet-hanaexpress/).
+Because HANA express requires a lot of resources, the integration tests can not be run locally or automatically. We have, however, set up a kitchen integration test, that runs on Azure. Check out the [configuration docs](https://github.com/test-kitchen/kitchen-azurerm#configuration) if you want to start it. Additionally, you need a Docker store login and then run the tests like this:
+
+    AZURE_SUBSCRIPTION_ID=your-azure-subscription-id AZURE_LOCATION=azure-location STORE_USERNAME=Docker-store-username STORE_PASSWORD=Docker-store-password bundle exec kitchen test all

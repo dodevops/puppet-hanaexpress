@@ -5,16 +5,19 @@ fixtures:
   forge_modules:
     stdlib:
         repo: "puppetlabs/stdlib"
-        ref: "4.25.1"
+        ref: "6.0.0"
     docker:
         repo: "puppetlabs/docker"
-        ref: "1.1.0"
+        ref: "3.7.0"
     augeasproviders_sysctl:
         repo: "herculesteam/augeasproviders_sysctl"
-        ref: "2.2.0"
+        ref: "2.3.1"
     augeasproviders_core:
         repo: "herculesteam/augeasproviders_core"
-        ref: "2.1.4"
+        ref: "2.5.0"
+    yumrepo_core:
+        repo: "puppetlabs/yumrepo_core"
+        ref: "1.0.3"
     apt:
         repo: "puppetlabs/apt"
-        ref: "4.5.1"
+        ref: "7.1.0"

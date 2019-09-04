@@ -1,0 +1,3 @@
+hanaexpress::hana_data_path: "/data"
+hanaexpress::pass_is_hash: true
+hanaexpress::manage_service: true

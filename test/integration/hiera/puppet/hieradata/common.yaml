@@ -3,6 +3,7 @@ classes:
 
 hanaexpress::store_username: "%{store_username}"
 hanaexpress::store_password: "%{store_password}"
+hanaexpress::pass_is_hash: false
 
 hanaexpress-databases:
     testhana1:

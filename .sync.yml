@@ -1,0 +1,32 @@
+.gitignore:
+    paths:
+        - "/test/integration/**/.librarian"
+        - "/test/integration/**/.tmp"
+        - ".kitchen"
+        - ".vscode"
+Gemfile:
+    required:
+        ":development":
+            - gem: "kitchen-docker"
+              version: "2.9.0"
+            - gem: "kitchen-puppet"
+              version: "3.5.1"
+            - gem: "serverspec"
+              version: "2.41.5"
+            - gem: "test-kitchen"
+              version: "2.2.5"
+Rakefile:
+    requires:
+        - "kitchen/rake_tasks"
+    extras:
+        - "Kitchen::RakeTasks.new"
+        - |
+            task :integration_test do
+              [:metadata_lint, :lint, :validate, :spec].each do |test|
+                Rake::Task[test].invoke
+              end
+              Rake::Task['kitchen:all'].invoke
+            end
+.travis.yml:
+    user: "dodevops"
+    secure: "pDp/oW9VVEZTNFsKZR99D9OZA3rFKLnx+IfbuD2DlRuV9cLhy9WfRABNdUEo03tGt3fPD4ZAIQ5H5h/z+0vdaRuF/+JzCEt9VHGKWCAEVcmKGSdQRmA9ybZwp5/0fmj2OD3ylDNfFdTWMlTK7Eit/oNSM/sOK3dFSXUA9e0+oyF074vcE6LFT5YKZD952dyyad0EbS8KhBqR9gxiMN6EUITXTrNvuqsIngkNZMvHCyee02yb/iCRQcDKRtdz1KMhKnNLmDgt8n9RG3P80v/xX4HOlVJi+SnHkIhuFsr6BID/GrrhogImiMbfpEit4zqUXW8TvKnyxCv0RdqlvktGdILhbjF7asDZmWjLVkfvajKAXXI4N76Aqc6FpKLXdwCkpuKeNwU42QCRQVBLaemdZIAmRXX/Rtlqbrpx0TnsgPLR7VIw6E7HR7cM01FZm4El9O6mVSXeuXRNFzmMpqShN7I2R/ozn7AJZHvlreG+/SxEV/Y09V11LkzoEwxcGRe15rgT41svkLhA559bnec8WjVGj5iI9ZWUUj+2W0ucCXItrHYrKdtsbXZwe/QThUMpmXRI6SMuooY9lV9KEnTCh9Vr8zOsqkBcgtqNvCxCHfYeqif4Z0eTXb+iA05KdRzlX+utUTSrtGD/zGc6/kGmHm80PtpcE+K7mCbFfKbZivc="

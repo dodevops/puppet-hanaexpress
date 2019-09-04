@@ -1,5 +1,3 @@
-# Sets up a container with a SAP HANA database
-#
 # @summary Sets up a container with a SAP HANA database
 #
 # @param name Name of the hana instance (only ASCII-characters and numbers are allowed)
@@ -9,63 +7,74 @@
 #   specifics about valid passwords
 # @param systemdb_port Port to use for the HANA System database
 # @param tenantdb_port Port to use for the HANA default tenant database (HXE)
-#
-# @example
-#   hanaexpress::database { 'namevar': }
-define hanaexpress::database(
+# @param manage_service Manage a system service for this database
+define hanaexpress::database (
   String $version,
   String $password,
   Integer $systemdb_port,
-  Integer $tenantdb_port
+  Integer $tenantdb_port,
+  Optional[Boolean] $manage_service = undef,
 ) {
 
   include hanaexpress
 
-  $_name = pick($name, $title)
+  $_name = $name ? {
+    undef   => $title,
+    default => $name
+  }
+
+  $_manage_service = $manage_service ? {
+    undef   => $hanaexpress::manage_service,
+    default => $manage_service,
+  }
 
   # Create data path
 
   file {
     "${::hanaexpress::hana_data_path}/${_name}":
-      ensure => "directory",
-      owner => 12000,
-      group => 79
+      ensure => 'directory',
+      owner  => 12000,
+      group  => 79
   }
 
   # Create password file
 
   file {
     "${::hanaexpress::hana_data_path}/${_name}/password.json":
-      ensure => "file",
-      content => to_json({
-        "master_password" => $password
-      }),
-      owner => 12000,
-      group => 79,
-      mode => "0600"
-  } ->
+      ensure  => 'file',
+      content => @("EOT"/L)
+        {
+          "master_password": "${password}"
+        }
+        EOT
+    ,
+    owner     => 12000,
+    group     => 79,
+    mode      => '0600'
+  }
 
   # Start container
 
-  docker::run {
+  -> docker::run {
     "hana-${_name}":
-      hostname => "hana-${_name}",
-      image => "store/saplabs/hanaexpress:${version}",
-      ports => [
+      hostname         => "hana-${_name}",
+      image            => "store/saplabs/hanaexpress:${version}",
+      ports            => [
         "${systemdb_port}:39017",
         "${tenantdb_port}:39041"
       ],
-      volumes => [
+      volumes          => [
         "${::hanaexpress::hana_data_path}/${_name}:/hana/mounts"
       ],
       extra_parameters => [
-        "--ulimit nofile=1048576:1048576",
-        "--sysctl kernel.shmmax=1073741824",
-        "--sysctl net.ipv4.ip_local_port_range=\"40000 60999\"",
-        "--sysctl kernel.shmmni=524288",
-        "--sysctl kernel.shmall=8388608",
+        '--ulimit nofile=1048576:1048576',
+        '--sysctl kernel.shmmax=1073741824',
+        '--sysctl net.ipv4.ip_local_port_range\x3d40000\x2060999',
+        '--sysctl kernel.shmmni=524288',
+        '--sysctl kernel.shmall=8388608',
       ],
-      command => "--passwords-url file:///hana/mounts/password.json --agree-to-sap-license"
+      command          => '--passwords-url file:///hana/mounts/password.json --agree-to-sap-license',
+      manage_service   => $_manage_service,
   }
 
 }

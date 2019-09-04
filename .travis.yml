@@ -1,38 +1,47 @@
 ---
-sudo: false
-dist: trusty
+dist: xenial
 language: ruby
 cache: bundler
 before_install:
   - bundle -v
   - rm -f Gemfile.lock
-  - gem update --system
-  - gem update bundler
+  - gem update --system $RUBYGEMS_VERSION
   - gem --version
   - bundle -v
 script:
   - 'bundle exec rake $CHECK'
 bundler_args: --without system_tests
 rvm:
-  - 2.4.1
-env:
-  - PUPPET_GEM_VERSION="~> 5.0" CHECK=spec
+  - 2.5.3
+stages:
+  - static
+  - spec
+  - acceptance
+  -
+    if: tag =~ ^v\d
+    name: deploy
 matrix:
   fast_finish: true
   include:
     -
-      env: CHECK=rubocop
+      env: CHECK="check:symlinks check:git_ignore check:dot_underscore check:test_file rubocop syntax lint metadata_lint"
+      stage: static
     -
-      env: CHECK="syntax lint"
+      env: PUPPET_GEM_VERSION="~> 5.0" CHECK=parallel_spec
+      rvm: 2.4.5
+      stage: spec
     -
-      env: CHECK=metadata_lint
+      env: PUPPET_GEM_VERSION="~> 6.0" CHECK=parallel_spec
+      rvm: 2.5.3
+      stage: spec
     -
-      env: CHECK=release_checks
+      env: DEPLOY_TO_FORGE=yes
+      stage: deploy
     -
-      env: CHECK=spec
-    -
-      env: PUPPET_GEM_VERSION="~> 4.0" CHECK=spec
-      rvm: 2.1.9
+      env: PUPPET_GEM_VERSION="~> 6.0" CHECK=integration_test
+      rvm: 2.5.3
+      script: travis_wait 80 bundle exec rake $CHECK
+      stage: spec
 branches:
   only:
     - master
@@ -41,9 +50,9 @@ notifications:
   email: false
 deploy:
   provider: puppetforge
-  user: puppet
+  user: dodevops
   password:
-    secure: ""
+    secure: "pDp/oW9VVEZTNFsKZR99D9OZA3rFKLnx+IfbuD2DlRuV9cLhy9WfRABNdUEo03tGt3fPD4ZAIQ5H5h/z+0vdaRuF/+JzCEt9VHGKWCAEVcmKGSdQRmA9ybZwp5/0fmj2OD3ylDNfFdTWMlTK7Eit/oNSM/sOK3dFSXUA9e0+oyF074vcE6LFT5YKZD952dyyad0EbS8KhBqR9gxiMN6EUITXTrNvuqsIngkNZMvHCyee02yb/iCRQcDKRtdz1KMhKnNLmDgt8n9RG3P80v/xX4HOlVJi+SnHkIhuFsr6BID/GrrhogImiMbfpEit4zqUXW8TvKnyxCv0RdqlvktGdILhbjF7asDZmWjLVkfvajKAXXI4N76Aqc6FpKLXdwCkpuKeNwU42QCRQVBLaemdZIAmRXX/Rtlqbrpx0TnsgPLR7VIw6E7HR7cM01FZm4El9O6mVSXeuXRNFzmMpqShN7I2R/ozn7AJZHvlreG+/SxEV/Y09V11LkzoEwxcGRe15rgT41svkLhA559bnec8WjVGj5iI9ZWUUj+2W0ucCXItrHYrKdtsbXZwe/QThUMpmXRI6SMuooY9lV9KEnTCh9Vr8zOsqkBcgtqNvCxCHfYeqif4Z0eTXb+iA05KdRzlX+utUTSrtGD/zGc6/kGmHm80PtpcE+K7mCbFfKbZivc="
   on:
     tags: true
     all_branches: true

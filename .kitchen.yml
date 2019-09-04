@@ -1,35 +1,73 @@
 ---
 driver:
-    name: vagrant
-    run_options:
-        env:
+    name: azurerm
+    subscription_id: <%= ENV['AZURE_SUBSCRIPTION_ID'] %>
+    location: <%= ENV['AZURE_LOCATION'] %>
+    machine_size: 'Standard_A6'
+
+transport:
+    connection_retries: 30
 
 provisioner:
     name: puppet_apply
+    manifest: site.pp
+    puppet_debug: true
+    ignored_paths_from_root:
+        - "spec"
+        - "vendor"
     custom_facts:
         store_username: <%= ENV['STORE_USERNAME'] %>
         store_password: <%= ENV['STORE_PASSWORD'] %>
 
 platforms:
-    - name: ubuntu-16.04
-      driver:
-        box: bento/ubuntu-16.04
-    - name: ubuntu-18.04
-      driver:
-        box: bento/ubuntu-18.04
-    - name: debian-9
-      driver:
-        box: bento/debian-9
+    -   name: ubuntu-16.04
+        driver:
+            image_urn: Canonical:UbuntuServer:16.04-LTS:latest
+        provisioner:
+            name: puppet_apply
+            puppet_apt_repo: "http://apt.puppetlabs.com/puppet-release-xenial.deb"
+    -   name: ubuntu-16.04-puppet4
+        driver:
+            image_urn: Canonical:UbuntuServer:16.04-LTS:latest
+        provisioner:
+            name: puppet_apply
+            require_puppet_collections: true
+            puppet_apt_collections_repo: "http://apt.puppetlabs.com/puppetlabs-release-pc1-xenial.deb"
+    -   name: centos-7
+        driver:
+            image_urn: OpenLogic:CentOS:7-CI:latest
+            custom_data: |
+                #cloud-config
+                write_files:
+                -   content: |
+                        azure ALL=(ALL) NOPASSWD: ALL
+                    owner: root:root
+                    path: /etc/sudoers.d/kitchen
+                    permissions: '0644'
+                runcmd:
+                -   [ rm, -f, /etc/sudoers.d/waagent ]
+        provisioner:
+            name: puppet_apply
+            require_puppet_collections: true
+            puppet_yum_collections_repo: "https://yum.puppetlabs.com/puppet5/puppet5-release-el-7.noarch.rpm"
+    -   name: centos-7-puppet4
+        driver:
+            image_urn: OpenLogic:CentOS:7-CI:latest
+            custom_data: |
+                #cloud-config
+                write_files:
+                -   content: |
+                        azure ALL=(ALL) NOPASSWD: ALL
+                    owner: root:root
+                    path: /etc/sudoers.d/kitchen
+                    permissions: '0644'
+                runcmd:
+                -   [ rm, -f, /etc/sudoers.d/waagent ]
+        provisioner:
+            name: puppet_apply
+            require_puppet_collections: true
+            puppet_yum_collections_repo: "https://yum.puppetlabs.com/puppetlabs-release-pc1-el-7.noarch.rpm"
 
 suites:
-    - name: default
-      provisioner:
-        manifests_path: test/integration/default/puppet
-        modules_path: test/integration/default/puppet/modules
-        puppetfile_path: test/integration/default/puppet/Puppetfile
-    - name: hiera
-      provisioner:
-        manifests_path: test/integration/hiera/puppet
-        modules_path: test/integration/hiera/puppet/modules
-        puppetfile_path: test/integration/hiera/puppet/Puppetfile
-        hiera_data_path: test/integration/hiera/puppet/hieradata
+    -   name: default
+        run_list:
